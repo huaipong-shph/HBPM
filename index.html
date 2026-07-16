@@ -242,8 +242,8 @@
             try {
                 const base64Data = await fileToBase64(imageFile);
                 
-                // ใช้ URL ดั้งเดิมของ Gemini (สามารถใช้คีย์ AQ... ได้โดยตรงแล้ว)
-                const GEMINI_API_URL = `https://generativelanguage.googleapis.com/v1beta/models/gemini-1.5-flash:generateContent?key=${apiKey}`;
+                // ใช้ URL ดั้งเดิมของ Gemini เปลี่ยนชื่อโมเดลเป็น gemini-2.5-flash
+                const GEMINI_API_URL = `https://generativelanguage.googleapis.com/v1beta/models/gemini-2.5-flash:generateContent?key=${apiKey}`;
                 
                 const prompt = `อ่านข้อมูลจากตารางความดันโลหิต (ตารางมี 13 คอลัมน์):
                 1. ข้ามแถวที่ 1-2 (หัวตาราง)
