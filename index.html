@@ -233,6 +233,12 @@
                     } catch(e) {
                         errMsg += ' (ไม่สามารถอ่านสาเหตุที่แท้จริงจาก Google ได้)';
                     }
+                    
+                    // ดักจับ Error กรณียังไม่ได้กรอก/กรอกผิดบนอุปกรณ์ใหม่
+                    if (response.status === 401 || errMsg.includes("invalid authentication credentials")) {
+                        throw new Error("API Key ไม่ถูกต้อง! หากเพิ่งเปิดเว็บบนมือถือ/เครื่องใหม่ กรุณานำ API Key มากรอกแล้วกด 'บันทึก' อีกครั้ง (ระวังอย่าก๊อปปี้ติดช่องว่าง)");
+                    }
+                    
                     throw new Error(errMsg);
                 }
                 
