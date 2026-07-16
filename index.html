@@ -50,9 +50,9 @@
                         <i data-lucide="key" class="w-4 h-4 text-amber-500"></i> API Key
                     </label>
                     <div class="flex flex-col sm:flex-row gap-3 items-start">
-                        <div class="relative w-full">
+                        <div class="flex w-full gap-2">
                             <input type="password" id="apiKeyInput" placeholder="กรอก API Key ของคุณที่นี่..." class="w-full p-3.5 bg-white border border-slate-300 rounded-xl outline-none focus:border-blue-500 focus:ring-2 focus:ring-blue-200 transition" />
-                            <button id="toggleKeyBtn" class="absolute right-4 top-3.5 text-slate-400 hover:text-slate-600 transition">
+                            <button id="toggleKeyBtn" class="bg-white border border-slate-300 p-3.5 rounded-xl text-slate-500 hover:bg-slate-50 transition flex items-center justify-center shrink-0 shadow-sm">
                                 <i data-lucide="eye" class="w-5 h-5"></i>
                             </button>
                         </div>
@@ -71,9 +71,14 @@
                 
                 <div id="previewArea" class="text-center hidden">
                     <img id="previewImage" src="" class="max-h-64 mx-auto rounded-lg mb-6 object-contain shadow-sm border border-slate-200" />
-                    <button id="processBtn" class="w-full bg-blue-600 text-white p-3.5 rounded-xl font-bold flex justify-center items-center gap-2 hover:bg-blue-700 transition shadow-md">
-                        วิเคราะห์ข้อมูล
-                    </button>
+                    <div class="flex flex-col sm:flex-row gap-3">
+                        <button id="retakeBtn" class="w-full sm:w-1/3 bg-white border border-slate-300 text-slate-700 p-3.5 rounded-xl font-bold flex justify-center items-center gap-2 hover:bg-slate-50 transition shadow-sm">
+                            <i data-lucide="refresh-ccw" class="w-5 h-5"></i> เปลี่ยนรูป
+                        </button>
+                        <button id="processBtn" class="w-full sm:w-2/3 bg-blue-600 text-white p-3.5 rounded-xl font-bold flex justify-center items-center gap-2 hover:bg-blue-700 transition shadow-md">
+                            วิเคราะห์ข้อมูล
+                        </button>
+                    </div>
                 </div>
 
                 <div id="uploadArea" class="h-56 border-2 border-dashed rounded-xl flex flex-col items-center justify-center cursor-pointer hover:bg-blue-50 transition border-blue-200 bg-blue-50/30">
@@ -146,6 +151,7 @@
         const previewArea = document.getElementById('previewArea');
         const previewImage = document.getElementById('previewImage');
         const processBtn = document.getElementById('processBtn');
+        const retakeBtn = document.getElementById('retakeBtn');
         const errorBox = document.getElementById('errorBox');
         const errorText = document.getElementById('errorText');
         const step1 = document.getElementById('step1');
@@ -202,6 +208,15 @@
                 previewArea.classList.remove('hidden');
                 errorBox.classList.add('hidden');
             }
+        });
+
+        retakeBtn.addEventListener('click', () => {
+            fileInput.value = ''; // ล้างค่าไฟล์เดิมออก
+            imageFile = null;
+            previewArea.classList.add('hidden');
+            uploadArea.classList.remove('hidden');
+            errorBox.classList.add('hidden');
+            fileInput.click(); // เด้งหน้าต่างให้เลือกรูปใหม่ทันที
         });
 
         const fileToBase64 = (file) => new Promise((resolve, reject) => {
