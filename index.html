@@ -2,9 +2,19 @@
 <html lang="th">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
     <title>Home BP Cal</title>
+    
+    <!-- ไอคอนสำหรับเบราว์เซอร์ปกติ -->
     <link rel="icon" href="Home BP Cal.png" type="image/png">
+    
+    <!-- ไอคอนสำหรับ iPhone/iPad ตอน Add to Home Screen -->
+    <link rel="apple-touch-icon" href="Home BP Cal.png">
+    
+    <!-- ทำให้แอปดูเหมือนแอป Native บน iOS (ซ่อนแถบ URL Safari) -->
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+    <meta name="apple-mobile-web-app-title" content="HBP-Cal">
     
     <script src="https://cdn.tailwindcss.com"></script>
     <link href="https://fonts.googleapis.com/css2?family=Prompt:wght@300;400;500;600;700&display=swap" rel="stylesheet">
@@ -140,7 +150,6 @@
         const tableHeader = document.getElementById('tableHeader');
         
         // --- ส่วนที่แก้ไข: สร้างหัวตารางแบบ 2 ชั้น ---
-        // แถวที่ 1: ช่วงเวลา
         const trTime = document.createElement('tr');
         const times = ['ตอนเช้า ครั้งที่ 1', 'ตอนเช้า ครั้งที่ 2', 'ก่อนนอน ครั้งที่ 1', 'ก่อนนอน ครั้งที่ 2'];
         times.forEach(time => {
@@ -152,7 +161,6 @@
         });
         tableHeader.appendChild(trTime);
 
-        // แถวที่ 2: ประเภทค่าความดัน
         const trType = document.createElement('tr');
         const types = ['ตัวบน', 'ตัวล่าง', 'ชีพจร'];
         for (let i = 0; i < 4; i++) {
@@ -164,7 +172,6 @@
             });
         }
         tableHeader.appendChild(trType);
-        // ------------------------------------------
 
         toggleKeyBtn.addEventListener('click', () => {
             showKey = !showKey;
@@ -206,7 +213,6 @@
 
             try {
                 const base64Data = await fileToBase64(imageFile);
-                // เปลี่ยนไปใช้โมเดลล่าสุด Gemini 3.1 Flash-Lite (เปิดตัว กรกฎาคม 2026)
                 const GEMINI_API_URL = `https://generativelanguage.googleapis.com/v1beta/models/gemini-3.1-flash-lite:generateContent?key=${apiKey}`;
                 
                 const response = await fetch(GEMINI_API_URL, {
@@ -221,7 +227,6 @@
                     })
                 });
 
-                // ระบบจัดการ Error แบบใหม่ที่จะบอกสาเหตุจริงๆ
                 if (!response.ok) {
                     const errorTextStr = await response.text();
                     let errMsg = `HTTP ${response.status}: ${response.statusText}`;
@@ -230,11 +235,8 @@
                         if (errJson.error && errJson.error.message) {
                             errMsg = errJson.error.message;
                         }
-                    } catch(e) {
-                        errMsg += ' (ไม่สามารถอ่านสาเหตุที่แท้จริงจาก Google ได้)';
-                    }
+                    } catch(e) {}
                     
-                    // ดักจับ Error กรณียังไม่ได้กรอก/กรอกผิดบนอุปกรณ์ใหม่
                     if (response.status === 401 || errMsg.includes("invalid authentication credentials")) {
                         throw new Error("API Key ไม่ถูกต้อง! หากเพิ่งเปิดเว็บบนมือถือ/เครื่องใหม่ กรุณานำ API Key มากรอกแล้วกด 'บันทึก' อีกครั้ง (ระวังอย่าก๊อปปี้ติดช่องว่าง)");
                     }
@@ -247,7 +249,6 @@
                 responseText = responseText.replace(/```json/g, '').replace(/```/g, '').trim();
                 tableData = JSON.parse(responseText);
                 
-                // ตรวจสอบและปรับให้ข้อมูลมี 12 คอลัมน์ (ตัดคอลัมน์แรกทิ้งถ้ามี 13)
                 tableData = tableData.map(row => {
                     if (row.length === 13) {
                         return row.slice(1);
@@ -277,21 +278,17 @@
                     const td = document.createElement('td');
                     td.className = "border-b border-r border-slate-200 p-0 text-slate-700 text-center relative";
                     
-                    // --- ส่วนที่แก้ไข: สร้าง Input สำหรับแก้ไขข้อมูล ---
                     const input = document.createElement('input');
                     input.type = "number";
                     input.className = "w-full h-full p-3 text-center bg-transparent border-none outline-none focus:ring-2 focus:ring-blue-500 focus:bg-white transition-all";
                     input.value = (row[c] === null || row[c] === undefined) ? '' : row[c];
                     
-                    // เมื่อแก้ไขข้อมูล ให้อัปเดต tableData
                     input.addEventListener('change', (e) => {
                         const val = e.target.value;
                         tableData[rowIndex][c] = val === '' ? null : Number(val);
                     });
 
                     td.appendChild(input);
-                    // ------------------------------------------
-                    
                     tr.appendChild(td);
                 }
                 tbody.appendChild(tr);
